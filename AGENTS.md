@@ -28,30 +28,23 @@ Full design reference material — screenshots, extracted patterns, locked and o
 
 ## How this project is built
 
-This is being built through structured delegation to Claude Code, not line-by-line instruction. The governing principle: **skills define outcomes and structural constraints, not implementation steps.** A skill states what good looks like and pins down decisions that would otherwise cause inconsistency across components — it does not dictate control flow, variable names, or specific code. Where a skill is silent, that's a deliberate space for Claude Code's own judgment, not an oversight to guess around.
+Skills define outcomes and structural constraints, not implementation steps. Where a skill is silent, use your own judgment. Load the skill that matches the task:
 
-Four skills govern this build, all located under the project's skills directory:
+- **`/data-mapping`**: the RD → mapper → VM → UI pattern and per-field fallbacks
+- **`/graphql`**: all Hygraph access through `hygraphClient.ts` and each model's failure strategy
+- **`/seo`**: SEO and JSON-LD rules
+- **`/accessibility`**: WCAG 2.1 AA rules and the Definition of Done
 
-- **`/data-mapping`** — the RD → mapper → VM → UI pattern every component follows. Three-file structure (`index.astro`, `mappers.ts`, `types.ts`, plus optional `fallback.ts`), naming conventions, mapper responsibilities, field-level fallback treatment (Required / Flag / Default / Default-with-derived-placeholder).
-- **`/graphql`** — all Hygraph communication goes through one centralized client, `hygraphClient.ts`, exposing exactly two functions (`fetchWithFallback`, `fetchOrFail`). Every model is assigned an explicit failure strategy — no model is left for Claude Code to guess about.
-- **`/seo`** — no SEO fields in Hygraph, ever. Static pages (everything except `/nyheter/[slug]`) get hand-written SEO/JSON-LD from code constants, because the client will never manage this content. Only news articles derive SEO dynamically from live content.
-- **`/accessibility`** — WCAG 2.1 AA as a baseline, not a target. Includes the specific brand-red contrast resolution rule and a Definition of Done checklist.
-
-A companion reference doc, `fallback-reference.md`, holds the model-by-model Required/Flag/Default table — this is data the skills point to, not a skill itself, since it encodes no judgment, just the reconciled schema facts.
+Schema facts (models, enums, the field-by-field Required/Flag/Default table) live in `.claude/skills/data-mapping/fallback-reference.md`.
 
 ## Working relationship
 
-- **Claude Chat** — planning, architectural decisions, feature docs, schema design
-- **Claude Code** — implementation, in plan mode by default
-- **The developer** — retains authority at every decision and review point; proposals get reviewed and locked before being built on further, the same way the design brief is a proposal input, not a finished spec
+- **Claude Code** works in plan mode by default.
+- **The developer** keeps authority at every decision and review point. Plans get reviewed and locked before more work is built on them.
 
-## Current Hygraph schema
+## Status
 
-Nine models in use, reconciled field-by-field against the live Hygraph config on 2026-08-29 (introspection + record-level verification): `TeamModel`, `NewsCardModel`, `FixtureModel`, `PlayerModel`, `TrainingModel`, `TeamPageModel`, `SponsorModel`, `ResultModel`, `ClubMemberModel`. `HeroModel` was retired on 2026-10-07 — the homepage hero is now static code (Hygraph is for content the club updates: news, training, fixtures, results); nothing queries it. No shared components — team affiliation is three inline fields on `TeamModel` (`teamAffiliation`, `affiliationUrl`, `affiliationLogo`); club members (news authors, training coaches) are the standalone `ClubMemberModel`. `FixtureModel`, `TrainingModel`, `SponsorModel`, and `ResultModel` carry a developer-controlled `isActive` **enum** (`IsActive`: `active | inactive`), distinct from Hygraph's own publish/unpublish state; `NewsCardModel` and `TeamPageModel` have no such field. `PlayerModel` is out of scope for v1 (future roster feature). The team relation is named `teamModel` on every model and is nullable. Full field-level treatment lives in `.claude/skills/data-mapping/fallback-reference.md`.
-
-## Where things stand
-
-See `progress-tracker.md` for the live phase-by-phase checklist. Schema and all four skills are locked; design brief is ready for Claude Code's first design-system proposal; implementation is starting now.
+Live at https://sundet-basket.vercel.app/. `src/docs/progress-tracker.md` is the historical build log. Don't read it unless the developer asks.
 
 ## What's explicitly out of scope for v1
 
