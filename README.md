@@ -48,7 +48,7 @@ I built this with Claude Code, and the setup is the result of getting it wrong o
 - **Reference data kept separate from judgement.** The field-by-field fallback table lives in its own reference file, so the skills stay short.
 - **Plan mode by default.** Every plan is reviewed before anything is built on it, and decisions get locked before more work is stacked on top.
 
-The result is less for the agent to read in each task, fewer places for instructions to contradict each other, and more consistent components. I still read through what it writes. That's where most of my learning comes from.
+The result is less for the agent to read in each task, fewer places for instructions to contradict each other, and more consistent components. I still kept a progress tracker during the build. It's much smaller than Probell's and the agent no longer reads it by default; the next step is replacing it with issues and pull requests. I still read through what it writes. That's where most of my learning comes from.
 
 ## Running it
 
