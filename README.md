@@ -58,3 +58,4 @@ pnpm codegen    # needs HYGRAPH_API_URL and HYGRAPH_TOKEN in .env
 pnpm dev        # localhost:4321
 pnpm build
 ```
+
