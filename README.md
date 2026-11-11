@@ -40,16 +40,15 @@ Hygraph response  ->  mappers.ts  ->  view model  ->  index.astro
 
 I built this with Claude Code, and the setup is the result of getting it wrong on earlier projects.
 
-**Where I started.** On [Probell](https://github.com/stu1612/probell-astro) I used heavy spec-driven development: long specs and detailed docs, on the idea that more instruction meant better output. When I checked context usage, a large share of each session was going on the agent reading my own documentation rather than doing the work, and the specs kept drifting out of date.
+**Where I started.** On [Probell](https://github.com/stu1612/probell-astro) I used heavy spec-driven development: long specs and detailed docs, on the idea that more instruction meant better output. I ran a context audit to see where each session's tokens were going. The `CLAUDE.md` itself was small. The cost was in the documents the agent read while working: brand, SEO and design docs, and a progress tracker that grew past 20,000 words. Those docs also kept drifting out of date.
 
 **What I changed.**
 
-- **A short `CLAUDE.md`** that says what the project is and who it's for, then points to the skills instead of repeating them.
-- **Four focused [skills](.claude/skills)** for the decisions that would otherwise drift between components: data mapping, GraphQL access, SEO and accessibility. Each one defines the outcome and the hard rules, not the implementation. Where a skill is silent, that's deliberate room for the agent's judgement.
+- **Rules in focused [skills](.claude/skills), not in documents.** Four skills cover the decisions that would otherwise drift between components: data mapping, GraphQL access, SEO and accessibility. A skill loads when the task needs it, instead of the agent reading everything up front. Each one defines the outcome and the hard rules, not the implementation. Where a skill is silent, that's deliberate room for the agent's judgement.
 - **Reference data kept separate from judgement.** The field-by-field fallback table lives in its own reference file, so the skills stay short.
 - **Plan mode by default.** Every plan is reviewed before anything is built on it, and decisions get locked before more work is stacked on top.
 
-The result is less for the agent to read, fewer places for instructions to contradict each other, and more consistent components. I still read through what it writes. That's where most of my learning comes from.
+The result is less for the agent to read in each task, fewer places for instructions to contradict each other, and more consistent components. I still read through what it writes. That's where most of my learning comes from.
 
 ## Running it
 
@@ -59,3 +58,4 @@ pnpm codegen    # needs HYGRAPH_API_URL and HYGRAPH_TOKEN in .env
 pnpm dev        # localhost:4321
 pnpm build
 ```
+
